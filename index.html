@@ -251,7 +251,6 @@
 
   <script>
     // Progressive enhancement: submit via fetch so the visitor stays on the page.
-    // Requires a Formspree form ID in the form's action attribute above.
     var form = document.getElementById('gate-form');
     var thanks = document.getElementById('thanks');
     var btn = document.getElementById('submit-btn');
@@ -259,8 +258,11 @@
     form.addEventListener('submit', function (e) {
       e.preventDefault();
 
-      // No capture endpoint configured yet: acknowledge warmly without a broken link.
-      if (!form.action) {
+      // Read the raw attribute: an empty action= reflects as the page URL via
+      // form.action, so check the attribute itself to detect "no endpoint yet".
+      var endpoint = (form.getAttribute('action') || '').trim();
+      if (!endpoint) {
+        // No capture endpoint configured: acknowledge warmly without a network call.
         form.style.display = 'none';
         thanks.style.display = 'block';
         return;
@@ -269,7 +271,7 @@
       btn.disabled = true;
       btn.textContent = 'Sending…';
 
-      fetch(form.action, {
+      fetch(endpoint, {
         method: 'POST',
         body: new FormData(form),
         headers: { Accept: 'application/json' }
