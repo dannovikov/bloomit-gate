@@ -223,7 +223,7 @@
 
     <div class="divider"></div>
 
-    <form id="gate-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+    <form id="gate-form" action="" method="POST">
       <div class="q-label">
         While we&rsquo;re away &mdash; what do you think matters most about
         open source in the world of AI?
@@ -257,11 +257,15 @@
     var btn = document.getElementById('submit-btn');
 
     form.addEventListener('submit', function (e) {
-      // If the form ID hasn't been configured yet, let the browser handle it
-      // (will navigate to Formspree's setup page) instead of failing silently.
-      if (form.action.indexOf('YOUR_FORM_ID') !== -1) return;
-
       e.preventDefault();
+
+      // No capture endpoint configured yet: acknowledge warmly without a broken link.
+      if (!form.action) {
+        form.style.display = 'none';
+        thanks.style.display = 'block';
+        return;
+      }
+
       btn.disabled = true;
       btn.textContent = 'Sending…';
 
